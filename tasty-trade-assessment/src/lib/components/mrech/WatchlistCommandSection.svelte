@@ -39,17 +39,19 @@
 
 <div class="root">
 	<div class="primary-commands">
-		<div>
+		<div class="watchlist-select-section">
 			<div>Selected watchlist:</div>
 			<Select.Root
 				type="single"
 				value={selectedWatchlistName}
 				onValueChange={(newName) => onSelectWatchlistName(newName)}
 			>
-				<Select.Trigger>
-					{selectedWatchlistName === undefined || selectedWatchlistName === ''
-						? 'Choose a watchlist'
-						: selectedWatchlistName}
+				<Select.Trigger style={{ 'max-width': '200px', 'min-width': '200px' }}>
+					<span class="truncate">
+						{selectedWatchlistName === undefined || selectedWatchlistName === ''
+							? 'Choose a watchlist'
+							: selectedWatchlistName}
+					</span>
 				</Select.Trigger>
 				<Select.Content>
 					{#each watchlistNames as watchListName (watchListName)}
@@ -85,6 +87,7 @@
 									{
 										onSuccess(data, variables, context) {
 											queryClient.invalidateQueries({ queryKey: ['allWatchlists'] });
+											onSelectWatchlistName(nameOfNewWatchlistToCreate ?? '');
 											createWatchlistDialogIsOpen = false;
 											nameOfNewWatchlistToCreate = undefined;
 										}
@@ -139,5 +142,16 @@
 	.primary-commands {
 		display: flex;
 		align-items: flex-end;
+	}
+
+	.watchlist-select-section {
+		min-width: 200px;
+		max-width: 200px;
+	}
+
+	.truncate {
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
 	}
 </style>
