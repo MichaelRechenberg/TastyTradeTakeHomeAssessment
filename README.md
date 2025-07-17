@@ -5,7 +5,7 @@ The code is within the tasty-trade-assessment/ folder
 
 # Setup and running the application
 
-For running the application, I used node version 24.4.1.
+For running the application, I used node version 24.4.1. pnpm is used as the package manager, so install that if you haven't already.
 
 (one-time-setup): First, you'll have to navigate to the tasty-trade-assessment/ folder in your shell.
 Then, run the following command to install all the dependencies
