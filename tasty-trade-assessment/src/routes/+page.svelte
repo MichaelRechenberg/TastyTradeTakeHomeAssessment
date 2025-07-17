@@ -4,6 +4,7 @@
 	import WatchlistDashboard from '$lib/components/mrech/WatchlistDashboard.svelte';
 	import { fetchAllWatchlists } from '$lib/tastytrade-api/watchlist/fetchUserWatchlists';
 	import { deleteWatchlist } from '$lib/tastytrade-api/watchlist/deleteUserWatchlist';
+	import { createUserWatchlist } from '$lib/tastytrade-api/watchlist/createUserWatchlist';
 
 	let queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@
 		<WatchlistDashboard
 			fetchAllWatchlists={fetchAllWatchlists(sessionToken)}
 			deleteWatchlist={deleteWatchlist(sessionToken)}
+			createWatchlist={createUserWatchlist(sessionToken)}
 		/>
 	{:else}
 		<TastyTradeLogin

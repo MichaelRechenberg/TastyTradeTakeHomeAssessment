@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { useMutation, useQueryClient } from '@sveltestack/svelte-query';
+	import { Input } from '$lib/components/ui/input';
 	import * as Select from '$lib/components/ui/select';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Button, buttonVariants } from '$lib/components/ui/button';
@@ -9,19 +10,30 @@
 		DeleteWatchlistOutput
 	} from '$lib/tastytrade-api/watchlist/deleteUserWatchlist';
 	import type { WatchlistCommandSectionProps } from './WatchlistCommandSection.types';
+	import type {
+		CreateWatchlistOutput,
+		CreateWatchlistInput
+	} from '$lib/tastytrade-api/watchlist/createUserWatchlist';
 
 	let {
 		selectedWatchlistName,
 		onSelectWatchlistName,
 		watchlistNames,
-		deleteWatchlist
+		deleteWatchlist,
+		createWatchlist
 	}: WatchlistCommandSectionProps = $props();
 
-	let deleteDialogIsOpen = $state(false);
+	let deleteWatchlistDialogIsOpen = $state(false);
+	let createWatchlistDialogIsOpen = $state(false);
+	let nameOfNewWatchlistToCreate = $state(undefined);
 
 	let queryClient = useQueryClient();
 	let deleteWatchlistMutation = useMutation<DeleteWatchlistOutput, Error, DeleteWatchlistInput>(
 		(deleteWatchlistInput) => deleteWatchlist(deleteWatchlistInput)
+	);
+
+	let createWatchlistMutation = useMutation<CreateWatchlistOutput, Error, CreateWatchlistInput>(
+		(createWatchlistInput) => createWatchlist(createWatchlistInput)
 	);
 </script>
 
@@ -48,11 +60,46 @@
 				</Select.Content>
 			</Select.Root>
 		</div>
-		<Button aria-label="Add watchlist">+</Button>
+		<div>
+			<Dialog.Root bind:open={createWatchlistDialogIsOpen}>
+				<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>+</Dialog.Trigger>
+				<Dialog.Content>
+					<Dialog.Header>Create a new watchlist</Dialog.Header>
+					<Dialog.Description
+						>Choose a name for the new watchlist (must be unique)</Dialog.Description
+					>
+					<div>
+						<Input
+							aria-label="Watchlist name"
+							type="text"
+							bind:value={nameOfNewWatchlistToCreate}
+						/>
+					</div>
+					<Dialog.Footer>
+						<Button
+							disabled={nameOfNewWatchlistToCreate === undefined ||
+								nameOfNewWatchlistToCreate === ''}
+							onclick={() => {
+								$createWatchlistMutation.mutate(
+									{ watchlistName: nameOfNewWatchlistToCreate! },
+									{
+										onSuccess(data, variables, context) {
+											queryClient.invalidateQueries({ queryKey: ['allWatchlists'] });
+											createWatchlistDialogIsOpen = false;
+											nameOfNewWatchlistToCreate = undefined;
+										}
+									}
+								);
+							}}>Create watchlist</Button
+						>
+					</Dialog.Footer>
+				</Dialog.Content>
+			</Dialog.Root>
+		</div>
 	</div>
 	<div class="secondary-commands">
 		{#if selectedWatchlistName !== undefined && selectedWatchlistName !== ''}
-			<Dialog.Root bind:open={deleteDialogIsOpen}>
+			<Dialog.Root bind:open={deleteWatchlistDialogIsOpen}>
 				<Dialog.Trigger class={buttonVariants({ variant: 'destructive' })}>Delete</Dialog.Trigger>
 				<Dialog.Content>
 					<Dialog.Header>
@@ -67,7 +114,7 @@
 									{
 										onSuccess(data, variables, context) {
 											queryClient.invalidateQueries({ queryKey: ['allWatchlists'] });
-											deleteDialogIsOpen = false;
+											deleteWatchlistDialogIsOpen = false;
 										}
 									}
 								);
