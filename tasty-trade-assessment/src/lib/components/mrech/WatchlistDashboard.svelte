@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { useQuery } from '@sveltestack/svelte-query';
 
-	import type { GetAllUserWatchlistsOutput, Watchlist } from '$lib/tastytrade-api/watchlist';
+	import type { Watchlist } from '$lib/tastytrade-api/watchlist/watchlist.types';
+	import type { GetAllUserWatchlistsOutput } from '$lib/tastytrade-api/watchlist/fetchUserWatchlists';
 	import type { WatchlistDashboardProps } from './WatchlistDashboard.types';
 	import WatchlistSymbols from './WatchlistSymbols.svelte';
 	import WatchlistCommandSection from './WatchlistCommandSection.svelte';

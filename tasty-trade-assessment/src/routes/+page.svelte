@@ -2,7 +2,8 @@
 	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 	import TastyTradeLogin from '$lib/components/mrech/TastyTradeLogin.svelte';
 	import WatchlistDashboard from '$lib/components/mrech/WatchlistDashboard.svelte';
-	import { fetchAllWatchlists, deleteWatchlist } from '$lib/tastytrade-api/watchlist';
+	import { fetchAllWatchlists } from '$lib/tastytrade-api/watchlist/fetchUserWatchlists';
+	import { deleteWatchlist } from '$lib/tastytrade-api/watchlist/deleteUserWatchlist';
 
 	let queryClient = new QueryClient();
 

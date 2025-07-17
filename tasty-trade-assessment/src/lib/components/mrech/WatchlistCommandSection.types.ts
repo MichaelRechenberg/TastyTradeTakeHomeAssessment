@@ -1,4 +1,4 @@
-import type { DeleteWatchlistInput, DeleteWatchlistOutput } from "$lib/tastytrade-api/watchlist";
+import type { DeleteWatchlistInput, DeleteWatchlistOutput } from "$lib/tastytrade-api/watchlist/deleteUserWatchlist";
 
 export type WatchlistCommandSectionProps = {
     selectedWatchlistName?: string;

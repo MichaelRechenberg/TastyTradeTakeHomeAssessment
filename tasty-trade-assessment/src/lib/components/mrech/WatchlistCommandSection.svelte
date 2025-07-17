@@ -4,7 +4,10 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Button, buttonVariants } from '$lib/components/ui/button';
 
-	import type { DeleteWatchlistInput, DeleteWatchlistOutput } from '$lib/tastytrade-api/watchlist';
+	import type {
+		DeleteWatchlistInput,
+		DeleteWatchlistOutput
+	} from '$lib/tastytrade-api/watchlist/deleteUserWatchlist';
 	import type { WatchlistCommandSectionProps } from './WatchlistCommandSection.types';
 
 	let {
