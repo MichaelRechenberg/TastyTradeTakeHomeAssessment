@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Select from '$lib/components/ui/select';
+	import { Button } from '$lib/components/ui/button';
 
 	import type { WatchlistCommandSectionProps } from './WatchlistCommandSection.types';
 
@@ -23,10 +24,10 @@
 				</Select.Content>
 			</Select.Root>
 		</div>
-		<div>[+Add will go here]</div>
+		<Button aria-label="Add watchlist">+</Button>
 	</div>
 	<div class="secondary-commands">
-		<div>DELETE</div>
+		<Button>Delete</Button>
 	</div>
 </div>
 
