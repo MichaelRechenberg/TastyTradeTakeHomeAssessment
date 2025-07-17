@@ -47,6 +47,9 @@
 			<Input id={passwordId} type="password" bind:value={password} />
 		</div>
 	</div>
+	{#if $acquireSessionMutation.isLoading}
+		<div class="token-acquisition-inprogress-section">Logging in...</div>
+	{/if}
 	{#if tokenAcquisitionErrorText !== ''}
 		<div class="token-acquisition-error-section">
 			{tokenAcquisitionErrorText}
@@ -55,6 +58,7 @@
 	<div class="login-action-section">
 		<Button
 			onclick={() => {
+				tokenAcquisitionErrorText = '';
 				$acquireSessionMutation.mutate(
 					{ loginUsername: username, loginPassword: password },
 					{
@@ -104,5 +108,8 @@
 
 	.token-acquisition-error-section {
 		color: var(--destructive);
+	}
+
+	.token-acquisition-inprogress-section {
 	}
 </style>
