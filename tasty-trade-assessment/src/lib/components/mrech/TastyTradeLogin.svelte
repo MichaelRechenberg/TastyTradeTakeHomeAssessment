@@ -24,7 +24,7 @@
 
 	let acquireSessionMutation = useMutation<
 		AcquireSessionTokenOutput,
-		unknown,
+		Error,
 		AcquireSessionTokenInput
 	>((acquireSessionInput) => acquireSessionToken(acquireSessionInput));
 </script>

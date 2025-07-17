@@ -1,0 +1,62 @@
+<script lang="ts">
+	import { useQuery } from '@sveltestack/svelte-query';
+
+	import type { GetAllUserWatchlistsOutput, Watchlist } from '$lib/tastytrade-api/watchlist';
+	import type { WatchlistDashboardProps } from './WatchlistDashboard.types';
+	import WatchlistSymbols from './WatchlistSymbols.svelte';
+	import WatchlistCommandSection from './WatchlistCommandSection.svelte';
+
+	let { fetchAllWatchlists }: WatchlistDashboardProps = $props();
+
+	let selectedWatchlistName: string | undefined = $state(undefined);
+	let watchlistsKeyedByName: Record<string, Watchlist> = $state({});
+
+	const allWatchlistsQuery = useQuery<
+		GetAllUserWatchlistsOutput,
+		Error,
+		GetAllUserWatchlistsOutput
+	>('allWatchlists', fetchAllWatchlists, {
+		onSuccess: (allWatchlistData) => {
+			if (allWatchlistData.output && allWatchlistData.output.length > 0) {
+				allWatchlistData.output.sort((watchlistX, watchlistY) => {
+					return watchlistX.name > watchlistY.name ? 1 : -1;
+				});
+
+				// Reset watchlists keyed by name
+				watchlistsKeyedByName = {};
+				allWatchlistData.output.forEach((watchlist) => {
+					watchlistsKeyedByName[watchlist.name] = watchlist;
+				});
+
+				// Set the selected watchlist to the first watchlist (by name), if a watchlist hasn't already been selected
+				selectedWatchlistName = selectedWatchlistName
+					? selectedWatchlistName
+					: allWatchlistData.output[0].name;
+			}
+		}
+	});
+</script>
+
+<div>
+	{#if $allWatchlistsQuery.isLoading}
+		<div>Loading watchlists</div>
+	{:else if $allWatchlistsQuery.data}
+		<WatchlistCommandSection
+			{selectedWatchlistName}
+			watchlistNames={Object.keys(watchlistsKeyedByName).sort()}
+		/>
+		{#if Object.keys(watchlistsKeyedByName).length === 0}
+			<div>
+				<div>You currently have no watchlists</div>
+				<div>
+					Create a watchlist using the + button on the top of the page, and then your newly created
+					watchlist will show here.
+				</div>
+			</div>
+		{:else if selectedWatchlistName !== undefined && selectedWatchlistName in watchlistsKeyedByName}
+			<WatchlistSymbols watchlist={watchlistsKeyedByName[selectedWatchlistName]} />
+		{/if}
+	{:else}
+		<div>Failed to load watchlists</div>
+	{/if}
+</div>
