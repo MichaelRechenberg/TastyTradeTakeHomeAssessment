@@ -45,8 +45,15 @@
 			{selectedWatchlistName}
 			watchlistNames={Object.keys(watchlistsKeyedByName).sort()}
 		/>
-		{#if selectedWatchlistName !== undefined}
-			<div>Rendering watchlist for selected watchlist [{selectedWatchlistName}]</div>
+		{#if Object.keys(watchlistsKeyedByName).length === 0}
+			<div>
+				<div>You currently have no watchlists</div>
+				<div>
+					Create a watchlist using the + button on the top of the page, and then your newly created
+					watchlist will show here.
+				</div>
+			</div>
+		{:else if selectedWatchlistName !== undefined && selectedWatchlistName in watchlistsKeyedByName}
 			<WatchlistSymbols watchlist={watchlistsKeyedByName[selectedWatchlistName]} />
 		{/if}
 	{:else}

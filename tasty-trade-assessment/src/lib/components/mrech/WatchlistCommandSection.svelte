@@ -11,9 +11,12 @@
 	<div class="primary-commands">
 		<div>
 			<div>Selected watchlist:</div>
+			{@debug selectedWatchlistName}
 			<Select.Root type="single" bind:value={selectedWatchlistName}>
 				<Select.Trigger>
-					{selectedWatchlistName ?? 'Choose a watchlist'}
+					{selectedWatchlistName === undefined || selectedWatchlistName === ''
+						? 'Choose a watchlist'
+						: selectedWatchlistName}
 				</Select.Trigger>
 				<Select.Content>
 					{#each watchlistNames as watchListName (watchListName)}
