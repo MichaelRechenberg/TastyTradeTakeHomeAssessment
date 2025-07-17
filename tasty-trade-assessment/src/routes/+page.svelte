@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 	import TastyTradeLogin from '$lib/components/mrech/TastyTradeLogin.svelte';
+	import WatchlistDashboard from '$lib/components/mrech/WatchlistDashboard.svelte';
+	import { fetchAllWatchlists } from '$lib/tastytrade-api/watchlist';
 
 	let queryClient = new QueryClient();
 
@@ -9,7 +11,7 @@
 
 <QueryClientProvider client={queryClient}>
 	{#if sessionToken !== ''}
-		<div>Successfully acquired your session token (I'm not displaying it though teehee)</div>
+		<WatchlistDashboard fetchAllWatchlists={fetchAllWatchlists(sessionToken)} />
 	{:else}
 		<TastyTradeLogin
 			onSessionTokenAcquired={(acquiredSessionToken) => {
