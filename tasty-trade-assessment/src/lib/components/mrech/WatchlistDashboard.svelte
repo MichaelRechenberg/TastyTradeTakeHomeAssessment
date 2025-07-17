@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { useQuery } from '@sveltestack/svelte-query';
-	import * as Select from '$lib/components/ui/select';
 
 	import type { GetAllUserWatchlistsOutput, Watchlist } from '$lib/tastytrade-api/watchlist';
 	import type { WatchlistDashboardProps } from './WatchlistDashboard.types';
