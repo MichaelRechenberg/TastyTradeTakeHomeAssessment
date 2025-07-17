@@ -4,7 +4,19 @@ This repo contains my (Michael Rechenberg's) submission for the tastytrade SWE t
 The code is within the tasty-trade-assessment/ folder
 
 # Setup and running the application
-TODO: fill this out.  Mention workaround issue with corepack if needed
+
+For running the application, I used node version 24.4.1.
+
+(one-time-setup): First, you'll have to navigate to the tasty-trade-assessment/ folder in your shell.
+Then, run the following command to install all the dependencies
+> pnpm i
+
+Once the dependencies are installed, you can run
+> pnpm run dev
+
+This will start a local webserver serving up the application.
+
+Now you can navigate to the application using a web browser by going to the URL http://localhost:5173/
 
 # Open-Source libraries used
 
