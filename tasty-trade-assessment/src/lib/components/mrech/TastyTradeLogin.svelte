@@ -2,6 +2,14 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Button } from '$lib/components/ui/button';
+
+	import {
+		acquireSessionToken,
+		type AcquireSessionTokenOutput,
+		type AcquireSessionTokenInput
+	} from '$lib/tastytrade-api/session';
+
+	import { useMutation } from '@sveltestack/svelte-query';
 	import type { TastyTradeLoginProps } from './TastyTradeLogin.types';
 
 	let { onSessionTokenAcquired }: TastyTradeLoginProps = $props();
@@ -11,6 +19,14 @@
 
 	let username = $state('');
 	let password = $state('');
+
+	let tokenAcquisitionErrorText = $state('');
+
+	let acquireSessionMutation = useMutation<
+		AcquireSessionTokenOutput,
+		unknown,
+		AcquireSessionTokenInput
+	>((acquireSessionInput) => acquireSessionToken(acquireSessionInput));
 </script>
 
 <div class="root">
@@ -31,8 +47,32 @@
 			<Input id={passwordId} type="password" bind:value={password} />
 		</div>
 	</div>
+	{#if tokenAcquisitionErrorText !== ''}
+		<div class="token-acquisition-error-section">
+			{tokenAcquisitionErrorText}
+		</div>
+	{/if}
 	<div class="login-action-section">
-		<Button>Login</Button>
+		<Button
+			onclick={() => {
+				$acquireSessionMutation.mutate(
+					{ loginUsername: username, loginPassword: password },
+					{
+						onSettled(data?: AcquireSessionTokenOutput) {
+							if (data?.token) {
+								onSessionTokenAcquired(data.token);
+							} else if (data?.response?.status === 401) {
+								tokenAcquisitionErrorText =
+									'Invalid credentials. Check your credentials and try again';
+							} else {
+								tokenAcquisitionErrorText =
+									'Unknown error when acquiring token. Please try again later.';
+							}
+						}
+					}
+				);
+			}}>Login</Button
+		>
 	</div>
 </div>
 
@@ -60,5 +100,9 @@
 
 	.password-section {
 		margin-block-start: 8px;
+	}
+
+	.token-acquisition-error-section {
+		color: var(--destructive);
 	}
 </style>
