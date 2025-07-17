@@ -2,7 +2,8 @@
 	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 	import TastyTradeLogin from '$lib/components/mrech/TastyTradeLogin.svelte';
 	import WatchlistDashboard from '$lib/components/mrech/WatchlistDashboard.svelte';
-	import { fetchAllWatchlists } from '$lib/tastytrade-api/watchlist';
+	import { fetchAllWatchlists } from '$lib/tastytrade-api/watchlist/fetchUserWatchlists';
+	import { deleteWatchlist } from '$lib/tastytrade-api/watchlist/deleteUserWatchlist';
 
 	let queryClient = new QueryClient();
 
@@ -11,7 +12,10 @@
 
 <QueryClientProvider client={queryClient}>
 	{#if sessionToken !== ''}
-		<WatchlistDashboard fetchAllWatchlists={fetchAllWatchlists(sessionToken)} />
+		<WatchlistDashboard
+			fetchAllWatchlists={fetchAllWatchlists(sessionToken)}
+			deleteWatchlist={deleteWatchlist(sessionToken)}
+		/>
 	{:else}
 		<TastyTradeLogin
 			onSessionTokenAcquired={(acquiredSessionToken) => {
