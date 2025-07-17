@@ -1,3 +1,4 @@
+import { addApplicationJsonContentTypeHeader } from "./addApplicationJsonContentTypeHeader";
 import { TastyTradeApiBaseURL } from "./constants";
 
 export type AcquireSessionTokenInput = {
@@ -13,11 +14,12 @@ export type AcquireSessionTokenOutput = {
 export const acquireSessionToken = async (input: AcquireSessionTokenInput): Promise<AcquireSessionTokenOutput> => {
     const { loginUsername, loginPassword } = input;
 
+    let headers = {};
+    headers = addApplicationJsonContentTypeHeader(headers);
+
     const loginResponse = await fetch(`${TastyTradeApiBaseURL}/sessions`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers,
         body: JSON.stringify({ login: loginUsername, password: loginPassword })
     });
 

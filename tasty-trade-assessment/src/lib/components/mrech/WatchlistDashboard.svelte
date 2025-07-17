@@ -7,7 +7,7 @@
 	import WatchlistSymbols from './WatchlistSymbols.svelte';
 	import WatchlistCommandSection from './WatchlistCommandSection.svelte';
 
-	let { fetchAllWatchlists, deleteWatchlist }: WatchlistDashboardProps = $props();
+	let { fetchAllWatchlists, deleteWatchlist, createWatchlist }: WatchlistDashboardProps = $props();
 
 	let selectedWatchlistName: string | undefined = $state(undefined);
 	let watchlistsKeyedByName: Record<string, Watchlist> = $state({});
@@ -52,6 +52,7 @@
 		<WatchlistCommandSection
 			{selectedWatchlistName}
 			{deleteWatchlist}
+			{createWatchlist}
 			watchlistNames={Object.keys(watchlistsKeyedByName).sort()}
 			onSelectWatchlistName={(newName) => (selectedWatchlistName = newName)}
 		/>
