@@ -35,6 +35,6 @@ Note, that the way shadcn-svelte distributes code is to include the components' 
 Components under src/lib/components/ that are NOT in the ui/ folder were written by me.
 
 ## Data Fetching (svelte-query)
-svelte-query is used for making requests to the TastyTrade API, since it provides nice methods for setting up polling and for tracking the status of outgoing requests.
+svelte-query is used for making requests to the TastyTrade API, since it provides some convenient methods for querying. 
 
 
