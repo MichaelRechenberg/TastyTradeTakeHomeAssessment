@@ -7,7 +7,7 @@
 
 	import { type SymbolTableProps, type SymbolTableRow } from './SymbolTableProps';
 
-	let { symbolRows, onDeleteSymbols }: SymbolTableProps = $props();
+	let { symbolRows, onDeleteSymbols, shouldDisableDeleteButton }: SymbolTableProps = $props();
 
 	let rowSelection = $state<RowSelectionState>({});
 
@@ -70,6 +70,7 @@
 		{#if symbolTable.getFilteredSelectedRowModel().rows.length > 0}
 			<Button
 				variant="outline"
+				disabled={shouldDisableDeleteButton}
 				onclick={() =>
 					onDeleteSymbols(
 						symbolTable.getFilteredSelectedRowModel().rows.map((x) => x.original.symbolName)

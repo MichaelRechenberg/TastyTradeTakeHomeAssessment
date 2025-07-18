@@ -48,9 +48,14 @@
 </script>
 
 <div>
-	{#if isFetchingSymbolData}
-		<div>Fetching symbol data...</div>
-	{/if}
+	<div class="status-section" aria-live="polite">
+		{#if isFetchingSymbolData}
+			<div>Fetching symbol data...</div>
+		{/if}
+		{#if $deleteWatchlistSymbolsMutation.isLoading}
+			<div>Deleting symbols...</div>
+		{/if}
+	</div>
 	{#if marketDataForWatchlist}
 		<SymbolTable
 			symbolRows={marketDataForWatchlist
@@ -81,6 +86,13 @@
 					}
 				);
 			}}
+			shouldDisableDeleteButton={$deleteWatchlistSymbolsMutation.isLoading}
 		/>
 	{/if}
 </div>
+
+<style>
+	.status-section {
+		min-height: 3em;
+	}
+</style>
