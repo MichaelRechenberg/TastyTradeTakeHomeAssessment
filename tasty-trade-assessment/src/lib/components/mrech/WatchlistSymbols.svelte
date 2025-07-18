@@ -16,7 +16,8 @@
 		watchlist,
 		fetchMarketDataForSymbol,
 		deleteSymbolsFromWatchlist,
-		addSymbolToWatchlist
+		addSymbolToWatchlist,
+		searchSymbols
 	}: WatchlistSymbolsProps = $props();
 	let queryClient = useQueryClient();
 
@@ -119,6 +120,14 @@
 				);
 			}}
 			shouldDisableAddSymbolButton={$addSymbolToWatchlistMutation.isLoading}
+			searchSymbols={async (searchSymbolDataInput) => {
+				const symbolSearchOutput = await searchSymbols(searchSymbolDataInput);
+				if (symbolSearchOutput.response.ok) {
+					return symbolSearchOutput.symbolDataList ?? [];
+				} else {
+					return [];
+				}
+			}}
 		/>
 	{/if}
 </div>

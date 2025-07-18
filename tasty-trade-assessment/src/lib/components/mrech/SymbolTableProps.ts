@@ -1,4 +1,5 @@
 import type { InstrumentType } from "$lib/tastytrade-api/common.types";
+import type { SearchSymbolDataInput, SymbolData } from "$lib/tastytrade-api/symbol-search";
 
 export type SymbolTableProps = {
     symbolRows: SymbolTableRow[];
@@ -9,6 +10,7 @@ export type SymbolTableProps = {
         'instrument-type': InstrumentType;
     }) => void;
     shouldDisableAddSymbolButton?: boolean;
+    searchSymbols: (input: SearchSymbolDataInput) => Promise<SymbolData[]>;
 }
 
 export type SymbolTableRow = {

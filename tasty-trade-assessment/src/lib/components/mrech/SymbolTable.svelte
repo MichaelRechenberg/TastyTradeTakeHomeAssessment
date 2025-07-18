@@ -7,19 +7,22 @@
 	import { Input } from '$lib/components/ui/input';
 
 	import { type SymbolTableProps, type SymbolTableRow } from './SymbolTableProps';
+	import type { SymbolData } from '$lib/tastytrade-api/symbol-search';
 
 	let {
 		symbolRows,
 		onDeleteSymbols,
 		shouldDisableDeleteSymbolsButton,
 		addSymbolToWatchlist,
-		shouldDisableAddSymbolButton
+		shouldDisableAddSymbolButton,
+		searchSymbols
 	}: SymbolTableProps = $props();
 
 	let rowSelection = $state<RowSelectionState>({});
 	// The name inside the symbol text box
 	let symbolToAddRawName = $state<string | undefined>(undefined);
 
+	// Searching symbols
 	// The symbol name to use for searching (updates to it are debounced to prevent excessive network calls)
 	let searchSymbolName = $state<string | undefined>(undefined);
 	let searchSymbolNameDebounceTimer = $state<number | undefined>(undefined);
@@ -33,6 +36,26 @@
 		}, 400);
 	};
 
+	// Actual search
+	let symbolSearchResults = $state<SymbolData[]>([]);
+	$effect(() => {
+		if (searchSymbolName) {
+			console.log(searchSymbolName);
+			searchSymbols({ symbolPrefix: searchSymbolName })
+				.then((symbolData) => {
+					symbolSearchResults = symbolData;
+				})
+				.catch(() => {
+					symbolSearchResults = [];
+				});
+		}
+
+		return () => {
+			symbolSearchResults = [];
+		};
+	});
+
+	// Table definitions
 	let symbolColumnDefs: ColumnDef<SymbolTableRow>[] = [
 		{
 			id: 'select',
@@ -85,6 +108,11 @@
 </script>
 
 <div class="root">
+	<div>
+		{#each symbolSearchResults as searchResult (searchResult.symbol)}
+			<div>{searchResult.symbol}</div>
+		{/each}
+	</div>
 	<div class="command-section">
 		<span>Symbols</span>
 		<div class="symbol-name-input">
