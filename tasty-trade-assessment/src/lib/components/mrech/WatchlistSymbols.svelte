@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { MarketDataForSymbolOutput } from '$lib/tastytrade-api/market-data';
+	import SymbolTable from './SymbolTable.svelte';
 	import type { WatchlistSymbolsProps } from './WatchlistSymbols.types';
 
 	let { watchlist, fetchMarketDataForSymbol }: WatchlistSymbolsProps = $props();
@@ -33,16 +34,24 @@
 
 <div>
 	{#if isFetchingSymbolData}
-		<div>Fetch symbol data...</div>
+		<div>Fetching symbol data...</div>
 	{/if}
 	{#if marketDataForWatchlist}
-		<div>Actual symbol market data</div>
-		<ul>
-			{#each marketDataForWatchlist as symbolMarketData (symbolMarketData.marketData?.symbol)}
-				<li>
-					{`[${symbolMarketData.marketData?.symbol}] | ${symbolMarketData.marketData?.bid} | ${symbolMarketData.marketData?.ask} | ${symbolMarketData.marketData?.last}`}
-				</li>
-			{/each}
-		</ul>
+		<SymbolTable
+			symbolRows={marketDataForWatchlist
+				.map((x) => {
+					if (x.marketData) {
+						return {
+							symbolName: x.marketData.symbol,
+							bidPrice: x.marketData.bid,
+							askPrice: x.marketData.ask,
+							lastPrice: x.marketData.last
+						};
+					} else {
+						return undefined;
+					}
+				})
+				.filter((x) => x !== undefined)}
+		/>
 	{/if}
 </div>
