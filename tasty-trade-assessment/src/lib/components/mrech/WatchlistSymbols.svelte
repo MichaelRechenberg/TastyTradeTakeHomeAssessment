@@ -1,32 +1,44 @@
 <script lang="ts">
+	import type { MarketDataForSymbolOutput } from '$lib/tastytrade-api/market-data';
 	import type { WatchlistSymbolsProps } from './WatchlistSymbols.types';
-
-	import { useQuery } from '@sveltestack/svelte-query';
 
 	let { watchlist, fetchMarketDataForSymbol }: WatchlistSymbolsProps = $props();
 
+	let marketDataForWatchlist = $state([] as MarketDataForSymbolOutput[]);
+	let isFetchingSymbolData = $state(false);
+
 	let fetchMarketDataForAllWatchlistSymbols = async () => {
+		isFetchingSymbolData = true;
 		const marketDataSymbolPromises = watchlist['watchlist-entries'].map((watchlistEntry) => {
 			return fetchMarketDataForSymbol({ symbolName: watchlistEntry.symbol });
 		});
 
-		return Promise.all(marketDataSymbolPromises);
+		marketDataForWatchlist = await Promise.all(marketDataSymbolPromises);
+		isFetchingSymbolData = false;
 	};
 
-	let fetchMarketDataQuery = useQuery(
-		'selected-watchlist-symbol-marketdata',
-		fetchMarketDataForAllWatchlistSymbols,
-		{
-			refetchInterval: 5000
-		}
-	);
+	$effect(() => {
+		marketDataForWatchlist = [];
+		fetchMarketDataForAllWatchlistSymbols();
+
+		const intervalId = setInterval(() => {
+			fetchMarketDataForAllWatchlistSymbols();
+		}, 5000);
+
+		return () => {
+			clearInterval(intervalId);
+		};
+	});
 </script>
 
 <div>
-	{#if $fetchMarketDataQuery.data}
+	{#if isFetchingSymbolData}
+		<div>Fetch symbol data...</div>
+	{/if}
+	{#if marketDataForWatchlist}
 		<div>Actual symbol market data</div>
 		<ul>
-			{#each $fetchMarketDataQuery.data as symbolMarketData (symbolMarketData.marketData?.symbol)}
+			{#each marketDataForWatchlist as symbolMarketData (symbolMarketData.marketData?.symbol)}
 				<li>
 					{`[${symbolMarketData.marketData?.symbol}] | ${symbolMarketData.marketData?.bid} | ${symbolMarketData.marketData?.ask} | ${symbolMarketData.marketData?.last}`}
 				</li>
