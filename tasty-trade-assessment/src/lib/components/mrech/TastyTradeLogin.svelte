@@ -40,11 +40,15 @@
 	<div class="credentials-section">
 		<div>
 			<Label for={usernameId}>Username</Label>
-			<Input id={usernameId} type="text" bind:value={username} />
+			<div class="text-input-wrapper">
+				<Input id={usernameId} type="text" bind:value={username} />
+			</div>
 		</div>
 		<div class="password-section">
 			<Label for={passwordId}>Password</Label>
-			<Input id={passwordId} type="password" bind:value={password} />
+			<div class="text-input-wrapper">
+				<Input id={passwordId} type="password" bind:value={password} />
+			</div>
 		</div>
 	</div>
 	{#if $acquireSessionMutation.isLoading}
@@ -119,6 +123,7 @@
 		color: var(--destructive);
 	}
 
-	.token-acquisition-inprogress-section {
+	.text-input-wrapper {
+		margin-block-start: 4px;
 	}
 </style>
