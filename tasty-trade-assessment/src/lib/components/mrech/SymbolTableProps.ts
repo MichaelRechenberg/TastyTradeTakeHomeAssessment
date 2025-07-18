@@ -1,5 +1,6 @@
 export type SymbolTableProps = {
     symbolRows: SymbolTableRow[];
+    onDeleteSymbols: (symbolNames: string[]) => void;
 }
 
 export type SymbolTableRow = {

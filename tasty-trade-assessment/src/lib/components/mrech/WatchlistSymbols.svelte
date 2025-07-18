@@ -52,6 +52,7 @@
 					}
 				})
 				.filter((x) => x !== undefined)}
+			onDeleteSymbols={(symbolNames) => console.log(symbolNames)}
 		/>
 	{/if}
 </div>
