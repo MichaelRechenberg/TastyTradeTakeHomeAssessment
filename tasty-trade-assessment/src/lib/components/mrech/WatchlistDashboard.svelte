@@ -7,7 +7,12 @@
 	import WatchlistSymbols from './WatchlistSymbols.svelte';
 	import WatchlistCommandSection from './WatchlistCommandSection.svelte';
 
-	let { fetchAllWatchlists, deleteWatchlist, createWatchlist }: WatchlistDashboardProps = $props();
+	let {
+		fetchAllWatchlists,
+		deleteWatchlist,
+		createWatchlist,
+		fetchMarketDataForSymbol
+	}: WatchlistDashboardProps = $props();
 
 	let selectedWatchlistName: string | undefined = $state(undefined);
 	let watchlistsKeyedByName: Record<string, Watchlist> = $state({});
@@ -65,7 +70,10 @@
 				</div>
 			</div>
 		{:else if selectedWatchlistName !== undefined && selectedWatchlistName in watchlistsKeyedByName}
-			<WatchlistSymbols watchlist={watchlistsKeyedByName[selectedWatchlistName]} />
+			<WatchlistSymbols
+				watchlist={watchlistsKeyedByName[selectedWatchlistName]}
+				{fetchMarketDataForSymbol}
+			/>
 		{/if}
 	{:else}
 		<div>Failed to load watchlists</div>

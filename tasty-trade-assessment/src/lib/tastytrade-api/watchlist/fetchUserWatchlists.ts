@@ -1,6 +1,6 @@
 import { addAuthorizationHeader } from "../addTastyTradeAuthorizationHeader";
 import { TastyTradeApiBaseURL } from "../constants";
-import type { Watchlist } from "../watchlist";
+import type { Watchlist } from "./watchlist.types";
 
 export type GetAllUserWatchlistsOutput = {
     output?: Watchlist[];
@@ -15,8 +15,14 @@ export const fetchAllWatchlists = (sessionToken: string) => async (): Promise<Ge
 
     if (watchlistsResponse.ok) {
         const watchlists = await watchlistsResponse.json();
+        const apiWatchlistList = watchlists['data']['items'];
+
+        apiWatchlistList.forEach((x: any) => {
+            x['watchlist-entries'] = x['watchlist-entries'] ?? []
+        });
+
         return {
-            output: watchlists['data']['items'],
+            output: apiWatchlistList,
             response: watchlistsResponse
         }
     }
