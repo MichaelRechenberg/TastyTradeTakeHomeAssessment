@@ -17,8 +17,21 @@
 	}: SymbolTableProps = $props();
 
 	let rowSelection = $state<RowSelectionState>({});
-
+	// The name inside the symbol text box
 	let symbolToAddRawName = $state<string | undefined>(undefined);
+
+	// The symbol name to use for searching (updates to it are debounced to prevent excessive network calls)
+	let searchSymbolName = $state<string | undefined>(undefined);
+	let searchSymbolNameDebounceTimer = $state<number | undefined>(undefined);
+	const debounceSymbolNameForSearch = (newName: string | undefined) => {
+		if (searchSymbolNameDebounceTimer) {
+			clearTimeout(searchSymbolNameDebounceTimer);
+		}
+
+		searchSymbolNameDebounceTimer = setTimeout(() => {
+			searchSymbolName = newName;
+		}, 400);
+	};
 
 	let symbolColumnDefs: ColumnDef<SymbolTableRow>[] = [
 		{
@@ -75,7 +88,12 @@
 	<div class="command-section">
 		<span>Symbols</span>
 		<div class="symbol-name-input">
-			<Input bind:value={symbolToAddRawName} type="text" aria-label={'Symbol name input'} />
+			<Input
+				bind:value={symbolToAddRawName}
+				oninput={() => debounceSymbolNameForSearch(symbolToAddRawName)}
+				type="text"
+				aria-label={'Symbol name input'}
+			/>
 		</div>
 		<Button
 			variant="outline"
