@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { useQuery } from '@sveltestack/svelte-query';
 
+	import { Separator } from '$lib/components/ui/separator';
+
 	import type { Watchlist } from '$lib/tastytrade-api/watchlist/watchlist.types';
 	import type { GetAllUserWatchlistsOutput } from '$lib/tastytrade-api/watchlist/fetchUserWatchlists';
 	import type { WatchlistDashboardProps } from './WatchlistDashboard.types';
@@ -75,14 +77,17 @@
 				</div>
 			</div>
 		{:else if selectedWatchlistName !== undefined && selectedWatchlistName in watchlistsKeyedByName}
-			<div class="watchlist-symbols">
-				<WatchlistSymbols
-					watchlist={watchlistsKeyedByName[selectedWatchlistName]}
-					{fetchMarketDataForSymbol}
-					{deleteSymbolsFromWatchlist}
-					{addSymbolToWatchlist}
-					{searchSymbols}
-				/>
+			<div class="watchlist-wrapper">
+				<Separator />
+				<div class="watchlist-symbols">
+					<WatchlistSymbols
+						watchlist={watchlistsKeyedByName[selectedWatchlistName]}
+						{fetchMarketDataForSymbol}
+						{deleteSymbolsFromWatchlist}
+						{addSymbolToWatchlist}
+						{searchSymbols}
+					/>
+				</div>
 			</div>
 		{/if}
 	{:else}
@@ -93,5 +98,9 @@
 <style>
 	.watchlist-symbols {
 		margin: 4px;
+	}
+
+	.watchlist-wrapper {
+		margin-block-start: 10px;
 	}
 </style>
