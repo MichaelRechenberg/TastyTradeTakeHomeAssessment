@@ -4,14 +4,12 @@
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import * as Table from '$lib/components/ui/table';
 	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
 	import * as Popover from '$lib/components/ui/popover';
 	import * as Command from '$lib/components/ui/command';
 
 	import { type SymbolTableProps, type SymbolTableRow } from './SymbolTableProps';
 	import type { SymbolData } from '$lib/tastytrade-api/symbol-search';
 	import { tick } from 'svelte';
-	import { cn } from 'tailwind-variants';
 
 	let {
 		symbolRows,
@@ -136,12 +134,13 @@
 					{#snippet child({ props })}
 						<Button
 							variant="outline"
-							class="w-[200px] justify-between"
 							{...props}
 							role="combobox"
+							class="adjustable-width"
+							--min-width={'200px'}
 							aria-expanded={symbolSearchComboboxOpen}
 						>
-							{selectedSymbol?.symbol || 'Select a symbol...'}
+							{selectedSymbol?.symbol || 'Select a symbol to add...'}
 						</Button>
 					{/snippet}
 				</Popover.Trigger>
