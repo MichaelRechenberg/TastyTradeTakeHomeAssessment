@@ -1,9 +1,24 @@
 <script lang="ts">
 	import type { MarketDataForSymbolOutput } from '$lib/tastytrade-api/market-data';
+	import type {
+		DeleteSymbolsFromWatchlistInput,
+		DeleteSymbolsFromWatchlistOutput
+	} from '$lib/tastytrade-api/watchlist/deleteSymbolsFromWatchlist';
+	import { useMutation, useQueryClient } from '@sveltestack/svelte-query';
 	import SymbolTable from './SymbolTable.svelte';
 	import type { WatchlistSymbolsProps } from './WatchlistSymbols.types';
 
-	let { watchlist, fetchMarketDataForSymbol }: WatchlistSymbolsProps = $props();
+	let { watchlist, fetchMarketDataForSymbol, deleteSymbolsFromWatchlist }: WatchlistSymbolsProps =
+		$props();
+	let queryClient = useQueryClient();
+
+	let deleteWatchlistSymbolsMutation = useMutation<
+		DeleteSymbolsFromWatchlistOutput,
+		Error,
+		DeleteSymbolsFromWatchlistInput
+	>((deleteSymbolsFromWatchlistInput) =>
+		deleteSymbolsFromWatchlist(deleteSymbolsFromWatchlistInput)
+	);
 
 	let marketDataForWatchlist = $state([] as MarketDataForSymbolOutput[]);
 	let isFetchingSymbolData = $state(false);
@@ -33,9 +48,14 @@
 </script>
 
 <div>
-	{#if isFetchingSymbolData}
-		<div>Fetching symbol data...</div>
-	{/if}
+	<div class="status-section" aria-live="polite">
+		{#if isFetchingSymbolData}
+			<div>Fetching symbol data...</div>
+		{/if}
+		{#if $deleteWatchlistSymbolsMutation.isLoading}
+			<div>Deleting symbols...</div>
+		{/if}
+	</div>
 	{#if marketDataForWatchlist}
 		<SymbolTable
 			symbolRows={marketDataForWatchlist
@@ -52,6 +72,27 @@
 					}
 				})
 				.filter((x) => x !== undefined)}
+			onDeleteSymbols={(namesOfSymbolsToDelete) => {
+				$deleteWatchlistSymbolsMutation.mutate(
+					{
+						watchlist: watchlist,
+						watchlistName: watchlist.name,
+						symbolNamesToRemove: new Set<string>(namesOfSymbolsToDelete)
+					},
+					{
+						onSuccess(data, variables, context) {
+							queryClient.invalidateQueries({ queryKey: ['allWatchlists'] });
+						}
+					}
+				);
+			}}
+			shouldDisableDeleteButton={$deleteWatchlistSymbolsMutation.isLoading}
 		/>
 	{/if}
 </div>
+
+<style>
+	.status-section {
+		min-height: 3em;
+	}
+</style>

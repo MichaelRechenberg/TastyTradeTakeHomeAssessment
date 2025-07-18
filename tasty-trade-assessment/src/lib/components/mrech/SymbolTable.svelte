@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { type ColumnDef, getCoreRowModel, type RowSelectionState } from '@tanstack/table-core';
 	import { createSvelteTable, FlexRender, renderComponent } from '$lib/components/ui/data-table';
+	import { Checkbox } from '$lib/components/ui/checkbox';
 	import * as Table from '$lib/components/ui/table';
+	import { Button } from '$lib/components/ui/button';
 
 	import { type SymbolTableProps, type SymbolTableRow } from './SymbolTableProps';
-	import { Checkbox } from '../ui/checkbox';
 
-	let { symbolRows }: SymbolTableProps = $props();
+	let { symbolRows, onDeleteSymbols, shouldDisableDeleteButton }: SymbolTableProps = $props();
 
 	let rowSelection = $state<RowSelectionState>({});
 
@@ -61,40 +62,68 @@
 	});
 </script>
 
-<div>
-	<Table.Root>
-		<Table.Header>
-			{#each symbolTable.getHeaderGroups() as headerGroup (headerGroup.id)}
-				<Table.Row>
-					{#each headerGroup.headers as header (header.id)}
-						<Table.Head colspan={header.colSpan}>
-							{#if !header.isPlaceholder}
-								<FlexRender
-									content={header.column.columnDef.header}
-									context={header.getContext()}
-								/>
-							{/if}
-						</Table.Head>
-					{/each}
-				</Table.Row>
-			{/each}
-		</Table.Header>
-		<Table.Body>
-			{#each symbolTable.getRowModel().rows as row (row.id)}
-				<Table.Row data-state={row.getIsSelected() && 'selected'}>
-					{#each row.getVisibleCells() as cell (cell.id)}
-						<Table.Cell>
-							<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
+<div class="root">
+	<div class="command-section">
+		<div>Symbols</div>
+		<div>TEXT BOX GOES HERE</div>
+		<Button variant="outline">Add</Button>
+		{#if symbolTable.getFilteredSelectedRowModel().rows.length > 0}
+			<Button
+				variant="outline"
+				disabled={shouldDisableDeleteButton}
+				onclick={() =>
+					onDeleteSymbols(
+						symbolTable.getFilteredSelectedRowModel().rows.map((x) => x.original.symbolName)
+					)}>Delete</Button
+			>
+		{/if}
+	</div>
+	<div>
+		<Table.Root>
+			<Table.Header>
+				{#each symbolTable.getHeaderGroups() as headerGroup (headerGroup.id)}
+					<Table.Row>
+						{#each headerGroup.headers as header (header.id)}
+							<Table.Head colspan={header.colSpan}>
+								{#if !header.isPlaceholder}
+									<FlexRender
+										content={header.column.columnDef.header}
+										context={header.getContext()}
+									/>
+								{/if}
+							</Table.Head>
+						{/each}
+					</Table.Row>
+				{/each}
+			</Table.Header>
+			<Table.Body>
+				{#each symbolTable.getRowModel().rows as row (row.id)}
+					<Table.Row data-state={row.getIsSelected() && 'selected'}>
+						{#each row.getVisibleCells() as cell (cell.id)}
+							<Table.Cell>
+								<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
+							</Table.Cell>
+						{/each}
+					</Table.Row>
+				{:else}
+					<Table.Row>
+						<Table.Cell colspan={symbolColumnDefs.length}>
+							No symbols are in this watchlist
 						</Table.Cell>
-					{/each}
-				</Table.Row>
-			{:else}
-				<Table.Row>
-					<Table.Cell colspan={symbolColumnDefs.length}>
-						No symbols are in this watchlist
-					</Table.Cell>
-				</Table.Row>
-			{/each}
-		</Table.Body>
-	</Table.Root>
+					</Table.Row>
+				{/each}
+			</Table.Body>
+		</Table.Root>
+	</div>
 </div>
+
+<style>
+	.root {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.command-section {
+		display: flex;
+	}
+</style>
