@@ -202,10 +202,14 @@
 				<Button
 					variant="destructive"
 					disabled={shouldDisableDeleteSymbolsButton}
-					onclick={() =>
+					onclick={() => {
+						symbolSearchTriggerRef?.focus();
 						onDeleteSymbols(
 							symbolTable.getFilteredSelectedRowModel().rows.map((x) => x.original.symbolName)
-						)}>Delete</Button
+						);
+
+						rowSelection = {};
+					}}>Delete</Button
 				>
 			</div>
 		{/if}
