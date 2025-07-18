@@ -103,7 +103,9 @@
 	<div class="secondary-commands">
 		{#if selectedWatchlistName !== undefined && selectedWatchlistName !== ''}
 			<Dialog.Root bind:open={deleteWatchlistDialogIsOpen}>
-				<Dialog.Trigger class={buttonVariants({ variant: 'destructive' })}>Delete</Dialog.Trigger>
+				<Dialog.Trigger class={buttonVariants({ variant: 'destructive' })}
+					>Delete current watchlist</Dialog.Trigger
+				>
 				<Dialog.Content>
 					<Dialog.Header>
 						{`Are you sure you want to delete watchlist '${selectedWatchlistName}'?'`}
