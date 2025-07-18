@@ -5,9 +5,13 @@
 	import * as Table from '$lib/components/ui/table';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
+	import * as Popover from '$lib/components/ui/popover';
+	import * as Command from '$lib/components/ui/command';
 
 	import { type SymbolTableProps, type SymbolTableRow } from './SymbolTableProps';
 	import type { SymbolData } from '$lib/tastytrade-api/symbol-search';
+	import { tick } from 'svelte';
+	import { cn } from 'tailwind-variants';
 
 	let {
 		symbolRows,
@@ -20,10 +24,11 @@
 
 	let rowSelection = $state<RowSelectionState>({});
 	// The name inside the symbol text box
-	let symbolToAddRawName = $state<string | undefined>(undefined);
+	let symbolToAddRawName = $state<string>('');
 
 	// Searching symbols
 	// The symbol name to use for searching (updates to it are debounced to prevent excessive network calls)
+	let symbolSearchIsLoading = $state(false);
 	let searchSymbolName = $state<string | undefined>(undefined);
 	let searchSymbolNameDebounceTimer = $state<number | undefined>(undefined);
 	const debounceSymbolNameForSearch = (newName: string | undefined) => {
@@ -40,13 +45,16 @@
 	let symbolSearchResults = $state<SymbolData[]>([]);
 	$effect(() => {
 		if (searchSymbolName) {
-			console.log(searchSymbolName);
+			symbolSearchIsLoading = true;
 			searchSymbols({ symbolPrefix: searchSymbolName })
 				.then((symbolData) => {
 					symbolSearchResults = symbolData;
 				})
 				.catch(() => {
 					symbolSearchResults = [];
+				})
+				.finally(() => {
+					symbolSearchIsLoading = false;
 				});
 		}
 
@@ -54,6 +62,18 @@
 			symbolSearchResults = [];
 		};
 	});
+
+	// Symbol search combobox state
+	let symbolSearchComboboxOpen = $state(false);
+	let symbolSearchTriggerRef = $state<HTMLButtonElement>(null!);
+	let selectedSymbol = $state<SymbolData | undefined>(undefined);
+	// Be able to refocus the trigger element once the user selects an item
+	function closeAndFocusTrigger() {
+		symbolSearchComboboxOpen = false;
+		tick().then(() => {
+			symbolSearchTriggerRef.focus();
+		});
+	}
 
 	// Table definitions
 	let symbolColumnDefs: ColumnDef<SymbolTableRow>[] = [
@@ -108,34 +128,71 @@
 </script>
 
 <div class="root">
-	<div>
-		{#each symbolSearchResults as searchResult (searchResult.symbol)}
-			<div>{searchResult.symbol}</div>
-		{/each}
-	</div>
 	<div class="command-section">
 		<span>Symbols</span>
 		<div class="symbol-name-input">
-			<Input
-				bind:value={symbolToAddRawName}
-				oninput={() => debounceSymbolNameForSearch(symbolToAddRawName)}
-				type="text"
-				aria-label={'Symbol name input'}
-			/>
+			<Popover.Root bind:open={symbolSearchComboboxOpen}>
+				<Popover.Trigger bind:ref={symbolSearchTriggerRef} disabled={shouldDisableAddSymbolButton}>
+					{#snippet child({ props })}
+						<Button
+							variant="outline"
+							class="w-[200px] justify-between"
+							{...props}
+							role="combobox"
+							aria-expanded={symbolSearchComboboxOpen}
+						>
+							{selectedSymbol?.symbol || 'Select a symbol...'}
+						</Button>
+					{/snippet}
+				</Popover.Trigger>
+				<Popover.Content class="w-[200px] p-0">
+					<Command.Root>
+						<Command.Input
+							bind:value={symbolToAddRawName}
+							oninput={() => {
+								symbolSearchResults = [];
+								debounceSymbolNameForSearch(symbolToAddRawName);
+							}}
+							type="text"
+							aria-label={'Symbol name input'}
+							placeholder="Search symbol..."
+						/>
+						<Command.List>
+							{#if !symbolSearchIsLoading}
+								{#if symbolSearchResults.length === 0}
+									<Command.Empty>No symbols found.</Command.Empty>
+								{:else}
+									<Command.Group>
+										{#each symbolSearchResults as symbolSearchResult (symbolSearchResult.symbol)}
+											<Command.Item
+												value={symbolSearchResult.symbol}
+												onSelect={() => {
+													selectedSymbol = symbolSearchResult;
+													closeAndFocusTrigger();
+												}}
+											>
+												{symbolSearchResult.symbol}
+											</Command.Item>
+										{/each}
+									</Command.Group>
+								{/if}
+							{:else}
+								<Command.Empty>Searching symbols...</Command.Empty>
+							{/if}
+						</Command.List>
+					</Command.Root>
+				</Popover.Content>
+			</Popover.Root>
 		</div>
 		<Button
 			variant="outline"
-			disabled={shouldDisableAddSymbolButton}
+			aria-label="Add symbol to watchlist"
+			disabled={shouldDisableAddSymbolButton || selectedSymbol === undefined}
 			onclick={() => {
-				// TODO: this should take a Symbol constructed from auto-complete (result of debounced symbol search),
-				//   and not a simple POJO here that assumes instrument type is equity
-				if (symbolToAddRawName) {
-					addSymbolToWatchlist({
-						symbol: symbolToAddRawName,
-						'instrument-type': 'Equity'
-					});
+				if (selectedSymbol) {
+					addSymbolToWatchlist(selectedSymbol);
 				}
-			}}>Add</Button
+			}}>+</Button
 		>
 		{#if symbolTable.getFilteredSelectedRowModel().rows.length > 0}
 			<Button
