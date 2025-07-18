@@ -1,41 +1,44 @@
-import type { InstrumentType } from "./common.types";
-import { addAuthorizationHeader } from "./addTastyTradeAuthorizationHeader";
-import { TastyTradeApiBaseURL } from "./constants";
+import type { InstrumentType } from './common.types';
+import { addAuthorizationHeader } from './addTastyTradeAuthorizationHeader';
+import { TastyTradeApiBaseURL } from './constants';
 
 export type SymbolData = {
-    symbol: string;
-    'instrument-type': InstrumentType;
-}
+	symbol: string;
+	'instrument-type': InstrumentType;
+};
 
 export type SearchSymbolDataInput = {
-    symbolPrefix: string;
-}
+	symbolPrefix: string;
+};
 
 export type SearchSymbolDataOutput = {
-    symbolDataList?: SymbolData[];
-    response: Response;
-}
+	symbolDataList?: SymbolData[];
+	response: Response;
+};
 
-export const searchSymbol = (sessionToken: string) => async (searchSymbolDataInput: SearchSymbolDataInput): Promise<SearchSymbolDataOutput> => {
-    let headers = {};
-    headers = addAuthorizationHeader(headers, sessionToken);
+export const searchSymbol =
+	(sessionToken: string) =>
+	async (searchSymbolDataInput: SearchSymbolDataInput): Promise<SearchSymbolDataOutput> => {
+		let headers = {};
+		headers = addAuthorizationHeader(headers, sessionToken);
 
-    const { symbolPrefix } = searchSymbolDataInput;
+		const { symbolPrefix } = searchSymbolDataInput;
 
-    const searchResponse = await fetch(`${TastyTradeApiBaseURL}/symbols/search/${symbolPrefix}`, { headers });
+		const searchResponse = await fetch(`${TastyTradeApiBaseURL}/symbols/search/${symbolPrefix}`, {
+			headers
+		});
 
-    if (searchResponse.ok) {
-        const symbolSearchResults = await searchResponse.json();
+		if (searchResponse.ok) {
+			const symbolSearchResults = await searchResponse.json();
 
-        return {
-            symbolDataList: symbolSearchResults['data']['items'],
-            response: searchResponse
-        }
-    }
-    else {
-        return {
-            symbolDataList: undefined,
-            response: searchResponse
-        }
-    }
-}
+			return {
+				symbolDataList: symbolSearchResults['data']['items'],
+				response: searchResponse
+			};
+		} else {
+			return {
+				symbolDataList: undefined,
+				response: searchResponse
+			};
+		}
+	};

@@ -1,26 +1,31 @@
-import { addAuthorizationHeader } from "../addTastyTradeAuthorizationHeader";
-import { TastyTradeApiBaseURL } from "../constants";
+import { addAuthorizationHeader } from '../addTastyTradeAuthorizationHeader';
+import { TastyTradeApiBaseURL } from '../constants';
 
 export type DeleteWatchlistInput = {
-    watchlistName: string;
-}
+	watchlistName: string;
+};
 
 export type DeleteWatchlistOutput = {
-    response: Response;
-}
+	response: Response;
+};
 
-export const deleteWatchlist = (sessionToken: string) => async (deleteWatchlistInput: DeleteWatchlistInput): Promise<DeleteWatchlistOutput> => {
-    const { watchlistName } = deleteWatchlistInput;
+export const deleteWatchlist =
+	(sessionToken: string) =>
+	async (deleteWatchlistInput: DeleteWatchlistInput): Promise<DeleteWatchlistOutput> => {
+		const { watchlistName } = deleteWatchlistInput;
 
-    let headers = {};
-    headers = addAuthorizationHeader(headers, sessionToken);
+		let headers = {};
+		headers = addAuthorizationHeader(headers, sessionToken);
 
-    const deleteWatchlistResponse = await fetch(`${TastyTradeApiBaseURL}/watchlists/${watchlistName}`, {
-        method: "DELETE",
-        headers
-    });
+		const deleteWatchlistResponse = await fetch(
+			`${TastyTradeApiBaseURL}/watchlists/${watchlistName}`,
+			{
+				method: 'DELETE',
+				headers
+			}
+		);
 
-    return {
-        response: deleteWatchlistResponse
-    }
-}
+		return {
+			response: deleteWatchlistResponse
+		};
+	};

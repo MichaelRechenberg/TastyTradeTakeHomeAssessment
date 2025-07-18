@@ -1,1 +1,1 @@
-export const TastyTradeApiBaseURL = 'https://api.cert.tastyworks.com'
+export const TastyTradeApiBaseURL = 'https://api.cert.tastyworks.com';
