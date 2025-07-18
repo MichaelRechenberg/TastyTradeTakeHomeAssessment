@@ -11,7 +11,8 @@
 		fetchAllWatchlists,
 		deleteWatchlist,
 		createWatchlist,
-		fetchMarketDataForSymbol
+		fetchMarketDataForSymbol,
+		deleteSymbolsFromWatchlist
 	}: WatchlistDashboardProps = $props();
 
 	let selectedWatchlistName: string | undefined = $state(undefined);
@@ -73,6 +74,7 @@
 			<WatchlistSymbols
 				watchlist={watchlistsKeyedByName[selectedWatchlistName]}
 				{fetchMarketDataForSymbol}
+				{deleteSymbolsFromWatchlist}
 			/>
 		{/if}
 	{:else}

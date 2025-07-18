@@ -1,9 +1,24 @@
 <script lang="ts">
 	import type { MarketDataForSymbolOutput } from '$lib/tastytrade-api/market-data';
+	import type {
+		DeleteSymbolsFromWatchlistInput,
+		DeleteSymbolsFromWatchlistOutput
+	} from '$lib/tastytrade-api/watchlist/deleteSymbolsFromWatchlist';
+	import { useMutation, useQueryClient } from '@sveltestack/svelte-query';
 	import SymbolTable from './SymbolTable.svelte';
 	import type { WatchlistSymbolsProps } from './WatchlistSymbols.types';
 
-	let { watchlist, fetchMarketDataForSymbol }: WatchlistSymbolsProps = $props();
+	let { watchlist, fetchMarketDataForSymbol, deleteSymbolsFromWatchlist }: WatchlistSymbolsProps =
+		$props();
+	let queryClient = useQueryClient();
+
+	let deleteWatchlistSymbolsMutation = useMutation<
+		DeleteSymbolsFromWatchlistOutput,
+		Error,
+		DeleteSymbolsFromWatchlistInput
+	>((deleteSymbolsFromWatchlistInput) =>
+		deleteSymbolsFromWatchlist(deleteSymbolsFromWatchlistInput)
+	);
 
 	let marketDataForWatchlist = $state([] as MarketDataForSymbolOutput[]);
 	let isFetchingSymbolData = $state(false);
@@ -52,7 +67,20 @@
 					}
 				})
 				.filter((x) => x !== undefined)}
-			onDeleteSymbols={(symbolNames) => console.log(symbolNames)}
+			onDeleteSymbols={(namesOfSymbolsToDelete) => {
+				$deleteWatchlistSymbolsMutation.mutate(
+					{
+						watchlist: watchlist,
+						watchlistName: watchlist.name,
+						symbolNamesToRemove: new Set<string>(namesOfSymbolsToDelete)
+					},
+					{
+						onSuccess(data, variables, context) {
+							queryClient.invalidateQueries({ queryKey: ['allWatchlists'] });
+						}
+					}
+				);
+			}}
 		/>
 	{/if}
 </div>
