@@ -75,15 +75,23 @@
 				</div>
 			</div>
 		{:else if selectedWatchlistName !== undefined && selectedWatchlistName in watchlistsKeyedByName}
-			<WatchlistSymbols
-				watchlist={watchlistsKeyedByName[selectedWatchlistName]}
-				{fetchMarketDataForSymbol}
-				{deleteSymbolsFromWatchlist}
-				{addSymbolToWatchlist}
-				{searchSymbols}
-			/>
+			<div class="watchlist-symbols">
+				<WatchlistSymbols
+					watchlist={watchlistsKeyedByName[selectedWatchlistName]}
+					{fetchMarketDataForSymbol}
+					{deleteSymbolsFromWatchlist}
+					{addSymbolToWatchlist}
+					{searchSymbols}
+				/>
+			</div>
 		{/if}
 	{:else}
 		<div>Failed to load watchlists</div>
 	{/if}
 </div>
+
+<style>
+	.watchlist-symbols {
+		margin: 4px;
+	}
+</style>
