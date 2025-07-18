@@ -1,7 +1,7 @@
 import { addApplicationJsonContentTypeHeader } from "../addApplicationJsonContentTypeHeader";
 import { addAuthorizationHeader } from "../addTastyTradeAuthorizationHeader";
 import { TastyTradeApiBaseURL } from "../constants";
-import type { InstrumentType } from "../market-data";
+import type { InstrumentType } from "../common.types";
 import type { Watchlist } from "./watchlist.types";
 
 export type AddSymbolToWatchlistInput = {

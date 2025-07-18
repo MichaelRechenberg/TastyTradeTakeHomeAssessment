@@ -1,4 +1,4 @@
-import type { InstrumentType } from "$lib/tastytrade-api/market-data";
+import type { InstrumentType } from "$lib/tastytrade-api/common.types";
 
 export type SymbolTableProps = {
     symbolRows: SymbolTableRow[];
