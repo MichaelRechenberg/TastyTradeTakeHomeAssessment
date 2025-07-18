@@ -1,7 +1,14 @@
+import type { InstrumentType } from "$lib/tastytrade-api/market-data";
+
 export type SymbolTableProps = {
     symbolRows: SymbolTableRow[];
     onDeleteSymbols: (symbolNames: string[]) => void;
-    shouldDisableDeleteButton?: boolean;
+    shouldDisableDeleteSymbolsButton?: boolean;
+    addSymbolToWatchlist: (symbol: {
+        symbol: string;
+        'instrument-type': InstrumentType;
+    }) => void;
+    shouldDisableAddSymbolButton?: boolean;
 }
 
 export type SymbolTableRow = {

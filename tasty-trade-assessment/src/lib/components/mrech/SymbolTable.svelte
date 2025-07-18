@@ -4,12 +4,21 @@
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import * as Table from '$lib/components/ui/table';
 	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
 
 	import { type SymbolTableProps, type SymbolTableRow } from './SymbolTableProps';
 
-	let { symbolRows, onDeleteSymbols, shouldDisableDeleteButton }: SymbolTableProps = $props();
+	let {
+		symbolRows,
+		onDeleteSymbols,
+		shouldDisableDeleteSymbolsButton,
+		addSymbolToWatchlist,
+		shouldDisableAddSymbolButton
+	}: SymbolTableProps = $props();
 
 	let rowSelection = $state<RowSelectionState>({});
+
+	let symbolToAddRawName = $state<string | undefined>(undefined);
 
 	let symbolColumnDefs: ColumnDef<SymbolTableRow>[] = [
 		{
@@ -64,13 +73,28 @@
 
 <div class="root">
 	<div class="command-section">
-		<div>Symbols</div>
-		<div>TEXT BOX GOES HERE</div>
-		<Button variant="outline">Add</Button>
+		<span>Symbols</span>
+		<div class="symbol-name-input">
+			<Input bind:value={symbolToAddRawName} type="text" aria-label={'Symbol name input'} />
+		</div>
+		<Button
+			variant="outline"
+			disabled={shouldDisableAddSymbolButton}
+			onclick={() => {
+				// TODO: this should take a Symbol constructed from auto-complete (result of debounced symbol search),
+				//   and not a simple POJO here that assumes instrument type is equity
+				if (symbolToAddRawName) {
+					addSymbolToWatchlist({
+						symbol: symbolToAddRawName,
+						'instrument-type': 'Equity'
+					});
+				}
+			}}>Add</Button
+		>
 		{#if symbolTable.getFilteredSelectedRowModel().rows.length > 0}
 			<Button
 				variant="outline"
-				disabled={shouldDisableDeleteButton}
+				disabled={shouldDisableDeleteSymbolsButton}
 				onclick={() =>
 					onDeleteSymbols(
 						symbolTable.getFilteredSelectedRowModel().rows.map((x) => x.original.symbolName)
@@ -125,5 +149,10 @@
 
 	.command-section {
 		display: flex;
+		align-items: end;
+	}
+
+	.symbol-name-input {
+		max-width: 240px;
 	}
 </style>
