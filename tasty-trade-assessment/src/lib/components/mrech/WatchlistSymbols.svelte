@@ -7,18 +7,32 @@
 	import { useMutation, useQueryClient } from '@sveltestack/svelte-query';
 	import SymbolTable from './SymbolTable.svelte';
 	import type { WatchlistSymbolsProps } from './WatchlistSymbols.types';
+	import {
+		type AddSymbolToWatchlistInput,
+		type AddSymbolToWatchlistOutput
+	} from '$lib/tastytrade-api/watchlist/addSymbolToWatchlist';
 
-	let { watchlist, fetchMarketDataForSymbol, deleteSymbolsFromWatchlist }: WatchlistSymbolsProps =
-		$props();
+	let {
+		watchlist,
+		fetchMarketDataForSymbol,
+		deleteSymbolsFromWatchlist,
+		addSymbolToWatchlist
+	}: WatchlistSymbolsProps = $props();
 	let queryClient = useQueryClient();
 
-	let deleteWatchlistSymbolsMutation = useMutation<
+	let deleteSymbolsFromWatchlistMutation = useMutation<
 		DeleteSymbolsFromWatchlistOutput,
 		Error,
 		DeleteSymbolsFromWatchlistInput
 	>((deleteSymbolsFromWatchlistInput) =>
 		deleteSymbolsFromWatchlist(deleteSymbolsFromWatchlistInput)
 	);
+
+	let addSymbolToWatchlistMutation = useMutation<
+		AddSymbolToWatchlistOutput,
+		Error,
+		AddSymbolToWatchlistInput
+	>((addSymbolToWatchlistInput) => addSymbolToWatchlist(addSymbolToWatchlistInput));
 
 	let marketDataForWatchlist = $state([] as MarketDataForSymbolOutput[]);
 	let isFetchingSymbolData = $state(false);
@@ -52,8 +66,11 @@
 		{#if isFetchingSymbolData}
 			<div>Fetching symbol data...</div>
 		{/if}
-		{#if $deleteWatchlistSymbolsMutation.isLoading}
+		{#if $deleteSymbolsFromWatchlistMutation.isLoading}
 			<div>Deleting symbols...</div>
+		{/if}
+		{#if $addSymbolToWatchlistMutation.isLoading}
+			<div>Adding symbol...</div>
 		{/if}
 	</div>
 	{#if marketDataForWatchlist}
@@ -73,7 +90,7 @@
 				})
 				.filter((x) => x !== undefined)}
 			onDeleteSymbols={(namesOfSymbolsToDelete) => {
-				$deleteWatchlistSymbolsMutation.mutate(
+				$deleteSymbolsFromWatchlistMutation.mutate(
 					{
 						watchlist: watchlist,
 						watchlistName: watchlist.name,
@@ -86,7 +103,22 @@
 					}
 				);
 			}}
-			shouldDisableDeleteButton={$deleteWatchlistSymbolsMutation.isLoading}
+			shouldDisableDeleteSymbolsButton={$deleteSymbolsFromWatchlistMutation.isLoading}
+			addSymbolToWatchlist={(symbol) => {
+				$addSymbolToWatchlistMutation.mutate(
+					{
+						watchlist: watchlist,
+						watchlistName: watchlist.name,
+						symbolToAdd: symbol
+					},
+					{
+						onSuccess(data, variables, context) {
+							queryClient.invalidateQueries({ queryKey: ['allWatchlists'] });
+						}
+					}
+				);
+			}}
+			shouldDisableAddSymbolButton={$addSymbolToWatchlistMutation.isLoading}
 		/>
 	{/if}
 </div>
