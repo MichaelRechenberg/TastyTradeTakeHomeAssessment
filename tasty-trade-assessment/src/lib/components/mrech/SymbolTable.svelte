@@ -4,6 +4,7 @@
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import * as Table from '$lib/components/ui/table';
 	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
 
 	import { type SymbolTableProps, type SymbolTableRow } from './SymbolTableProps';
 
@@ -64,8 +65,10 @@
 
 <div class="root">
 	<div class="command-section">
-		<div>Symbols</div>
-		<div>TEXT BOX GOES HERE</div>
+		<span>Symbols</span>
+		<div class="symbol-name-input">
+			<Input type="text" aria-label={'Symbol name input'} />
+		</div>
 		<Button variant="outline">Add</Button>
 		{#if symbolTable.getFilteredSelectedRowModel().rows.length > 0}
 			<Button
@@ -125,5 +128,10 @@
 
 	.command-section {
 		display: flex;
+		align-items: end;
+	}
+
+	.symbol-name-input {
+		max-width: 240px;
 	}
 </style>
