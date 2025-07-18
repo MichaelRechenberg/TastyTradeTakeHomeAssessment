@@ -64,7 +64,9 @@
 		</div>
 		<div>
 			<Dialog.Root bind:open={createWatchlistDialogIsOpen}>
-				<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>+</Dialog.Trigger>
+				<div class="create-watchlist-button-wrapper">
+					<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>+</Dialog.Trigger>
+				</div>
 				<Dialog.Content>
 					<Dialog.Header>Create a new watchlist</Dialog.Header>
 					<Dialog.Description
@@ -103,7 +105,9 @@
 	<div class="secondary-commands">
 		{#if selectedWatchlistName !== undefined && selectedWatchlistName !== ''}
 			<Dialog.Root bind:open={deleteWatchlistDialogIsOpen}>
-				<Dialog.Trigger class={buttonVariants({ variant: 'destructive' })}>Delete</Dialog.Trigger>
+				<Dialog.Trigger class={buttonVariants({ variant: 'destructive' })}
+					>Delete current watchlist</Dialog.Trigger
+				>
 				<Dialog.Content>
 					<Dialog.Header>
 						{`Are you sure you want to delete watchlist '${selectedWatchlistName}'?'`}
@@ -153,5 +157,9 @@
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		overflow: hidden;
+	}
+
+	.create-watchlist-button-wrapper {
+		margin-inline-start: 2px;
 	}
 </style>

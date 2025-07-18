@@ -84,10 +84,19 @@
 	.root {
 		display: flex;
 		flex-direction: column;
-		margin: 10px;
+		margin-top: 20px;
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 600px;
 	}
 
-	.preamble {
+	@media screen and (max-width: 480px) {
+		.root {
+			margin-top: 0px;
+			margin-left: 2px;
+			margin-right: 2px;
+			margin-bottom: 2px;
+		}
 	}
 
 	.credentials-section {

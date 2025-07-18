@@ -21,6 +21,7 @@
 	}: SymbolTableProps = $props();
 
 	let rowSelection = $state<RowSelectionState>({});
+
 	// The name inside the symbol text box
 	let symbolToAddRawName = $state<string>('');
 
@@ -183,25 +184,34 @@
 				</Popover.Content>
 			</Popover.Root>
 		</div>
-		<Button
-			variant="outline"
-			aria-label="Add symbol to watchlist"
-			disabled={shouldDisableAddSymbolButton || selectedSymbol === undefined}
-			onclick={() => {
-				if (selectedSymbol) {
-					addSymbolToWatchlist(selectedSymbol);
-				}
-			}}>+</Button
-		>
-		{#if symbolTable.getFilteredSelectedRowModel().rows.length > 0}
+		<div class="symbol-add-button">
 			<Button
 				variant="outline"
-				disabled={shouldDisableDeleteSymbolsButton}
-				onclick={() =>
-					onDeleteSymbols(
-						symbolTable.getFilteredSelectedRowModel().rows.map((x) => x.original.symbolName)
-					)}>Delete</Button
+				aria-label="Add symbol to watchlist"
+				disabled={shouldDisableAddSymbolButton || selectedSymbol === undefined}
+				onclick={() => {
+					if (selectedSymbol) {
+						addSymbolToWatchlist(selectedSymbol);
+						symbolSearchTriggerRef?.focus();
+					}
+				}}>+</Button
 			>
+		</div>
+		{#if symbolTable.getFilteredSelectedRowModel().rows.length > 0}
+			<div class="symbol-delete-button">
+				<Button
+					variant="destructive"
+					disabled={shouldDisableDeleteSymbolsButton}
+					onclick={() => {
+						symbolSearchTriggerRef?.focus();
+						onDeleteSymbols(
+							symbolTable.getFilteredSelectedRowModel().rows.map((x) => x.original.symbolName)
+						);
+
+						rowSelection = {};
+					}}>Delete</Button
+				>
+			</div>
 		{/if}
 	</div>
 	<div>
@@ -251,10 +261,19 @@
 
 	.command-section {
 		display: flex;
-		align-items: end;
+		align-items: center;
 	}
 
 	.symbol-name-input {
+		margin-inline-start: 5px;
 		max-width: 240px;
+	}
+
+	.symbol-add-button {
+		margin-inline-start: 2px;
+	}
+
+	.symbol-delete-button {
+		margin-inline-start: 8px;
 	}
 </style>
