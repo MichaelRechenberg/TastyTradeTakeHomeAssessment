@@ -5,6 +5,7 @@
 	import { fetchAllWatchlists } from '$lib/tastytrade-api/watchlist/fetchUserWatchlists';
 	import { deleteWatchlist } from '$lib/tastytrade-api/watchlist/deleteUserWatchlist';
 	import { createUserWatchlist } from '$lib/tastytrade-api/watchlist/createUserWatchlist';
+	import { fetchMarketDataForSymbol } from '$lib/tastytrade-api/market-data';
 
 	let queryClient = new QueryClient();
 
@@ -17,6 +18,7 @@
 			fetchAllWatchlists={fetchAllWatchlists(sessionToken)}
 			deleteWatchlist={deleteWatchlist(sessionToken)}
 			createWatchlist={createUserWatchlist(sessionToken)}
+			fetchMarketDataForSymbol={fetchMarketDataForSymbol(sessionToken)}
 		/>
 	{:else}
 		<TastyTradeLogin
