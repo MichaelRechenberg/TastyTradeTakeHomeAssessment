@@ -192,6 +192,7 @@
 				onclick={() => {
 					if (selectedSymbol) {
 						addSymbolToWatchlist(selectedSymbol);
+						symbolSearchTriggerRef?.focus();
 					}
 				}}>+</Button
 			>
