@@ -1,13 +1,27 @@
 <script lang="ts">
-	import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
-	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table';
+	import { type ColumnDef, getCoreRowModel, type RowSelectionState } from '@tanstack/table-core';
+	import { createSvelteTable, FlexRender, renderComponent } from '$lib/components/ui/data-table';
 	import * as Table from '$lib/components/ui/table';
 
 	import { type SymbolTableProps, type SymbolTableRow } from './SymbolTableProps';
+	import { Checkbox } from '../ui/checkbox';
 
 	let { symbolRows }: SymbolTableProps = $props();
 
+	let rowSelection = $state<RowSelectionState>({});
+
 	let symbolColumnDefs: ColumnDef<SymbolTableRow>[] = [
+		{
+			id: 'select',
+			cell: ({ row }) =>
+				renderComponent(Checkbox, {
+					checked: row.getIsSelected(),
+					onCheckedChange: (value) => row.toggleSelected(!!value),
+					'aria-label': 'Select row'
+				}),
+			enableSorting: false,
+			enableHiding: false
+		},
 		{
 			accessorKey: 'symbolName',
 			header: 'Name'
@@ -29,6 +43,18 @@
 	const symbolTable = createSvelteTable({
 		get data() {
 			return symbolRows;
+		},
+		state: {
+			get rowSelection() {
+				return rowSelection;
+			}
+		},
+		onRowSelectionChange: (updater) => {
+			if (typeof updater === 'function') {
+				rowSelection = updater(rowSelection);
+			} else {
+				rowSelection = updater;
+			}
 		},
 		columns: symbolColumnDefs,
 		getCoreRowModel: getCoreRowModel()
