@@ -1,4 +1,5 @@
 import { addAuthorizationHeader } from "./addTastyTradeAuthorizationHeader";
+import type { InstrumentType } from "./common.types";
 import { TastyTradeApiBaseURL } from "./constants";
 
 export type MarketDataForSymbolInput = {
@@ -9,8 +10,6 @@ export type MarketDataForSymbolOutput = {
     marketData?: MarketData;
     response: Response;
 }
-
-export type InstrumentType = 'Bond' | 'Cryptocurrency' | 'Equity' | 'Equity Offering' | 'Equity Option' | 'Fixed Income Security' | 'Future' | 'Future Option' | 'Index' | 'Liquidity Pool' | 'Mutual Fund' | 'Unknown';
 
 export type MarketData = {
     symbol: string;
