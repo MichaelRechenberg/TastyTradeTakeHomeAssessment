@@ -60,7 +60,7 @@ The prices of all the symbols of the currently selected watchlist are refreshed 
 ## UI Component Library (shadcn-svelte)
 [shadcn-svelte](https://www.shadcn-svelte.com/) is used for basic UI primitives like buttons and dropdowns, as well as for the watchlist table.
 
-Note, that the way shadcn-svelte distributes code is to include the components' code inside the source of the consuming repo. So all the code in these files/filepaths are from shadcn-svelte, not me.
+Note, that the way shadcn-svelte distributes code is to include the components' code inside the source of the consuming repo. So all the code in these files/filepaths are from shadcn-svelte, not me:
 - src/lib/components/ui/*
 - src/lib/hooks/*
 - src/lib/utils.ts
