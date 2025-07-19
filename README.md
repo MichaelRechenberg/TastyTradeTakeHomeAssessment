@@ -16,7 +16,7 @@ Then, run the following command to install all the dependencies
 
 ## Running the application
 
-Once the dependencies are installed, you can run
+Once the dependencies are installed, you can run the following command from the tasty-trade-assessment/ folder
 > pnpm run dev
 
 This will start a local webserver serving up the application.
