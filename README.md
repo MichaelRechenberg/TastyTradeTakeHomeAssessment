@@ -1,7 +1,7 @@
 # Tasty Trade Take Home Assessment 
 This repo contains my (Michael Rechenberg's) submission for the tastytrade SWE take-home assessment.
 
-The code is within the tasty-trade-assessment/ folder
+The code is within the tasty-trade-assessment/ folder.  The entrypoint for most of the code is tasty-trade-assessment/src/routes/+page.svelte
 
 # Setup and running the application
 
